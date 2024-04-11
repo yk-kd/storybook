@@ -5232,6 +5232,7 @@ __metadata:
     lodash: "npm:^4.17.21"
     markdown-to-jsx: "npm:7.3.2"
     memoizerific: "npm:^1.11.3"
+    object-inspect: "npm:^1.13.1"
     polished: "npm:^4.2.2"
     react-colorful: "npm:^5.1.2"
     telejson: "npm:^7.2.0"

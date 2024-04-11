@@ -1,17 +1,18 @@
 import { dequal as deepEqual } from 'dequal';
 import type { FC } from 'react';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   useArgs,
   useGlobals,
   useArgTypes,
   useParameter,
   useStorybookState,
+  useAddonState,
 } from '@storybook/manager-api';
 import { PureArgsTable as ArgsTable, type PresetColor, type SortType } from '@storybook/blocks';
 
 import type { ArgTypes } from '@storybook/types';
-import { PARAM_KEY } from './constants';
+import { ADDON_ID, PARAM_KEY } from './constants';
 
 interface ControlsParameters {
   sort?: SortType;
@@ -26,6 +27,14 @@ export const ControlsPanel: FC = () => {
   const rows = useArgTypes();
   const { expanded, sort, presetColors } = useParameter<ControlsParameters>(PARAM_KEY, {});
   const { path, previewInitialized } = useStorybookState();
+  const storyFilePath = useParameter('fileName', '');
+  const [fileName] = storyFilePath.toString().split('/').slice(-1);
+  const [{ showStoryPreview }, updateState] = useAddonState(ADDON_ID, { showStoryPreview: false });
+
+  const toggleStoryPreview = useCallback(
+    () => updateState((state) => ({ ...state, showStoryPreview: !state.showStoryPreview })),
+    [updateState]
+  );
 
   // If the story is prepared, then show the args table
   // and reset the loading states
@@ -50,9 +59,12 @@ export const ControlsPanel: FC = () => {
       rows={withPresetColors}
       args={args}
       globals={globals}
+      fileName={fileName}
       hasUpdatedArgs={hasUpdatedArgs}
       updateArgs={updateArgs}
       resetArgs={resetArgs}
+      showStoryPreview={showStoryPreview}
+      toggleStoryPreview={toggleStoryPreview}
       inAddonPanel
       sort={sort}
       isLoading={isLoading}

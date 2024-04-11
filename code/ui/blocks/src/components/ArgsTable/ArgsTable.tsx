@@ -200,9 +200,12 @@ const sortFns: Record<SortType, SortFn | null> = {
 
 export interface ArgsTableOptionProps {
   children?: React.ReactNode;
+  fileName?: string;
   hasUpdatedArgs?: boolean;
   updateArgs?: (args: Args) => void;
   resetArgs?: (argNames?: string[]) => void;
+  showStoryPreview?: boolean;
+  toggleStoryPreview?: () => void;
   compact?: boolean;
   inAddonPanel?: boolean;
   initialExpandedArgs?: boolean;
@@ -317,9 +320,12 @@ const safeIncludeConditionalArg = (row: ArgType, args: Args, globals: Globals) =
  */
 export const ArgsTable: FC<ArgsTableProps> = (props) => {
   const {
+    fileName,
     hasUpdatedArgs,
     updateArgs,
     resetArgs,
+    showStoryPreview,
+    toggleStoryPreview,
     compact,
     inAddonPanel,
     initialExpandedArgs,
@@ -458,7 +464,19 @@ export const ArgsTable: FC<ArgsTableProps> = (props) => {
   return (
     <AddonWrapper>
       {table}
-      {hasUpdatedArgs && <SaveFromControls {...{ resetArgs, saveStory, createStory }} />}
+      {hasUpdatedArgs && (
+        <SaveFromControls
+          {...{
+            args,
+            fileName,
+            resetArgs,
+            saveStory,
+            createStory,
+            showStoryPreview,
+            toggleStoryPreview,
+          }}
+        />
+      )}
     </AddonWrapper>
   );
 };
