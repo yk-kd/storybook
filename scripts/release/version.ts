@@ -283,13 +283,13 @@ export const run = async (options: unknown) => {
     await bumpVersionSources(currentVersion, nextVersion);
     await bumpAllPackageJsons({ packages, nextVersion, verbose });
 
-    console.log(`⬆️ Updating lock file with ${chalk.blue('yarn install --mode=update-lockfile')}`);
-    await execaCommand(`yarn install --mode=update-lockfile`, {
+    console.log(`⬆️ Updating lock file with ${chalk.blue('bun install')}`);
+    await execaCommand(`bun install`, {
       cwd: path.join(CODE_DIR_PATH),
       stdio: verbose ? 'inherit' : undefined,
       cleanup: true,
     });
-    console.log(`✅ Updated lock file with ${chalk.blue('yarn install --mode=update-lockfile')}`);
+    console.log(`✅ Updated lock file with ${chalk.blue('bun install')}`);
   }
 
   if (process.env.GITHUB_ACTIONS === 'true') {

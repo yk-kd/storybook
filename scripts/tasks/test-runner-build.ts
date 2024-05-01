@@ -21,7 +21,7 @@ export const testRunnerBuild: Task & { port: number } = {
     ];
 
     await exec(
-      `yarn test-storybook ${flags.join(' ')}`,
+      `bun run test-storybook ${flags.join(' ')}`,
       {
         ...execOptions,
         env: {

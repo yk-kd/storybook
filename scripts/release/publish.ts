@@ -10,6 +10,7 @@ import dedent from 'ts-dedent';
 import pRetry from 'p-retry';
 import { execaCommand } from 'execa';
 import { esMain } from '../utils/esmain';
+import { CODE_DIRECTORY } from '../utils/constants';
 
 program
   .name('publish')
@@ -38,8 +39,7 @@ type Options = {
   dryRun?: boolean;
 };
 
-const CODE_DIR_PATH = path.join(__dirname, '..', '..', 'code');
-const CODE_PACKAGE_JSON_PATH = path.join(CODE_DIR_PATH, 'package.json');
+const CODE_PACKAGE_JSON_PATH = path.join(CODE_DIRECTORY, 'package.json');
 
 const validateOptions = (options: { [key: string]: any }): options is Options => {
   optionsSchema.parse(options);
@@ -112,7 +112,7 @@ const buildAllPackages = async () => {
   await execaCommand('bun run task --task=compile --start-from=compile --no-link', {
     stdio: 'inherit',
     cleanup: true,
-    cwd: CODE_DIR_PATH,
+    cwd: CODE_DIRECTORY,
   });
   console.log(`🏗️ Packages successfully built`);
 };
@@ -127,7 +127,7 @@ const publishAllPackages = async ({
   dryRun?: boolean;
 }) => {
   console.log(`📦 Publishing all packages...`);
-  const command = `yarn workspaces foreach --all --parallel --no-private --verbose npm publish --tolerate-republish --tag ${tag}`;
+  const command = `nx exec -- npm publish --tolerate-republish --tag ${tag}`;
   if (verbose) {
     console.log(`📦 Executing: ${command}`);
   }
@@ -148,7 +148,7 @@ const publishAllPackages = async ({
       execaCommand(command, {
         stdio: 'inherit',
         cleanup: true,
-        cwd: CODE_DIR_PATH,
+        cwd: CODE_DIRECTORY,
       }),
     {
       retries: 4,

@@ -58,7 +58,7 @@ Object.keys(tasks)
   .parse(process.argv);
 
 Object.keys(tasks).forEach((key) => {
-  // checks if a flag is passed e.g. yarn build --@storybook/addon-docs --watch
+  // checks if a flag is passed e.g. bun run build --@storybook/addon-docs --watch
   const containsFlag = program.rawArgs.includes(tasks[key].suffix);
   tasks[key].value = containsFlag || program.all;
 });
@@ -93,7 +93,7 @@ if (
       message: 'Select the packages to build',
       name: 'todo',
       min: 1,
-      hint: 'You can also run directly with package name like `yarn build core`, or `yarn build --all` for all packages!',
+      hint: 'You can also run directly with package name like `bun run build core`, or `bun run build --all` for all packages!',
       // @ts-expect-error @types incomplete
       optionsPerPage: windowSize.height - 3, // 3 lines for extra info
       choices: packages.map(({ name: key }) => ({
@@ -108,7 +108,7 @@ if (
     return todo?.map((key) => tasks[key]);
   });
 } else {
-  // hits here when running yarn build --packagename
+  // hits here when running bun run build --packagename
   watchMode = process.argv.includes('--watch');
   prodMode = process.argv.includes('--prod');
   selection = Object.keys(tasks)

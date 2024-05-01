@@ -39,7 +39,7 @@ const getFooter = async (branch: Branch, workflow: Workflow, job: string) => {
 };
 
 // This command is run in Circle CI on failures, to get a rich message to report to Discord
-// Usage: yarn get-report-message type workflow branch
+// Usage: bun run get-report-message type workflow branch
 async function run() {
   const [, , workflow = '', template = 'none'] = process.argv;
 

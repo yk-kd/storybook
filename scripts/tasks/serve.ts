@@ -18,7 +18,7 @@ export const serve: Task = {
   async run({ builtSandboxDir, codeDir }, { debug, dryRun }) {
     const controller = new AbortController();
     exec(
-      `yarn http-server ${builtSandboxDir} --port ${PORT} -s`,
+      `bun run http-server ${builtSandboxDir} --port ${PORT} -s`,
       { cwd: codeDir },
       { dryRun, debug, signal: controller.signal as AbortSignal }
     ).catch((err) => {

@@ -18,7 +18,7 @@ export const dev: Task = {
   },
   async run({ sandboxDir, selectedTask }, { dryRun, debug }) {
     const controller = new AbortController();
-    const devCommand = `yarn storybook --port ${PORT}${selectedTask === 'dev' ? '' : ' --ci'}`;
+    const devCommand = `bun run storybook --port ${PORT}${selectedTask === 'dev' ? '' : ' --ci'}`;
     const start = now();
 
     exec(
