@@ -1,30 +1,12 @@
-import fs from 'fs-extra';
-import path from 'path';
+import { join } from 'path';
 import { dedent } from 'ts-dedent';
-import { ESLint } from '../../../../scripts/node_modules/eslint';
+import prettier from 'prettier';
 import { globalsNameValueMap } from '../src/globals/runtime';
 
-const location = path.join(__dirname, '..', 'src', 'globals', 'exports.ts');
-let attempts = 0;
+const location = join(__dirname, '..', 'src', 'globals', 'exports.ts');
 
 function removeDefault(input: string) {
   return input !== 'default';
-}
-
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-async function generate(text: string) {
-  console.log('Linting...');
-
-  const eslint = new ESLint({
-    cwd: path.join(__dirname, '..'),
-    fix: true,
-  });
-  const output = await eslint.lintText(text, { filePath: location });
-
-  console.log('Writing...');
-
-  await fs.writeFile(location, output[0].output);
 }
 
 const run = async () => {
@@ -45,24 +27,14 @@ const run = async () => {
   
   export default ${JSON.stringify(data, null, 2)} as const;`;
 
-  await fs.ensureFile(location);
+  const prettierConfig = await prettier.resolveConfig(location);
 
-  const tryGenerate = async () => {
-    attempts += 1;
+  const formattedFileContent = await prettier.format(text, {
+    ...prettierConfig,
+    parser: 'typescript',
+  });
 
-    await generate(text).catch(async (e) => {
-      if (attempts > 5) {
-        throw e;
-      }
-
-      console.log('Retrying...');
-
-      await wait(1000);
-      await tryGenerate();
-    });
-  };
-
-  await tryGenerate();
+  await Bun.write(location, formattedFileContent);
 
   console.log('Done!');
 };

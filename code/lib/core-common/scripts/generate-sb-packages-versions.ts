@@ -1,24 +1,24 @@
-#!/usr/bin/env bun
+/// <reference types="@types/bun" />
 
 import { glob } from 'glob';
 import { exec } from 'node:child_process';
-import * as path from 'node:path';
+import { join, relative } from 'node:path';
 import semver from 'semver';
 import { dedent } from 'ts-dedent';
 import pkg from '../../../package.json';
 
-const codeDirectory = path.join(__dirname, '..', '..', '..');
-const versionsPath = path.join(__dirname, '..', 'src', 'versions.ts');
+const codeDirectory = join(__dirname, '..', '..', '..');
+const versionsPath = join(__dirname, '..', 'src', 'versions.ts');
 const logger = console;
 
 const getMonorepoPackages = async () => {
   const files = await glob(
-    pkg.workspaces.packages.map((l) => path.join(l, 'package.json')),
+    pkg.workspaces.packages.map((l) => join(l, 'package.json')),
     { cwd: codeDirectory }
   );
 
   const contents = await Promise.all(
-    files.map((file) => Bun.file(path.join(codeDirectory, file)).json())
+    files.map((file) => Bun.file(join(codeDirectory, file)).json())
   );
 
   return contents.filter((content) => !content.private);
@@ -56,12 +56,12 @@ const run = async () => {
   );
 
   logger.log(
-    `Updating versions and formatting results at: ${path.relative(codeDirectory, versionsPath)}`
+    `Updating versions and formatting results at: ${relative(codeDirectory, versionsPath)}`
   );
 
-  const prettierBin = path.join(codeDirectory, '..', 'scripts', 'node_modules', '.bin', 'prettier');
+  const prettierBin = join(codeDirectory, '..', 'scripts', 'node_modules', '.bin', 'prettier');
   exec(`${prettierBin} --write ${versionsPath}`, {
-    cwd: path.join(codeDirectory),
+    cwd: join(codeDirectory),
   });
 };
 

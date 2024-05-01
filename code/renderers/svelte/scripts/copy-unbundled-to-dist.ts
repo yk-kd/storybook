@@ -1,5 +1,5 @@
 import { copy } from 'fs-extra';
-import { join } from 'path';
+import { join } from 'node:path';
 
 const src = join(__dirname, '..', 'src');
 const dist = join(__dirname, '..', 'dist');
