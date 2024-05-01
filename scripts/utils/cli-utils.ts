@@ -12,7 +12,7 @@ export const checkDependencies = async () => {
 
   if (!existsSync(join(scriptsPath, 'node_modules'))) {
     tasks.push(
-      spawn('yarn', ['install'], {
+      spawn('bun', ['install'], {
         cwd: scriptsPath,
         shell: true,
         stdio: ['inherit', 'inherit', 'inherit'],
@@ -21,7 +21,7 @@ export const checkDependencies = async () => {
   }
   if (!existsSync(join(codePath, 'node_modules'))) {
     tasks.push(
-      spawn('yarn', ['install'], {
+      spawn('bun', ['install'], {
         cwd: codePath,
         shell: true,
         stdio: ['inherit', 'inherit', 'inherit'],

@@ -1,56 +1,53 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 
-const { promisify } = require('util');
-const { readJson, writeFile } = require('fs-extra');
-const { exec } = require('child_process');
-const path = require('path');
-const semver = require('semver');
-const { default: dedent } = require('ts-dedent');
+import { glob } from 'glob';
+import { exec } from 'node:child_process';
+import * as path from 'node:path';
+import semver from 'semver';
+import { dedent } from 'ts-dedent';
+import pkg from '../../../package.json';
 
-const rootDirectory = path.join(__dirname, '..', '..', '..');
-
+const codeDirectory = path.join(__dirname, '..', '..', '..');
+const versionsPath = path.join(__dirname, '..', 'src', 'versions.ts');
 const logger = console;
 
 const getMonorepoPackages = async () => {
-  const process = promisify(exec);
-  const contents = await process('yarn workspaces list --json --no-private', {
-    cwd: rootDirectory,
-  });
+  const files = await glob(
+    pkg.workspaces.packages.map((l) => path.join(l, 'package.json')),
+    { cwd: codeDirectory }
+  );
 
-  return JSON.parse(`[${contents.stdout.trim().split('\n').join(',')}]`).map((w) => w.location);
+  const contents = await Promise.all(
+    files.map((file) => Bun.file(path.join(codeDirectory, file)).json())
+  );
+
+  return contents.filter((content) => !content.private);
 };
 
 const run = async () => {
   let updatedVersion = process.argv[process.argv.length - 1];
 
   if (!semver.valid(updatedVersion)) {
-    updatedVersion = (await readJson(path.join(rootDirectory, 'package.json'))).version;
+    updatedVersion = pkg.version;
   }
 
   const storybookPackages = await getMonorepoPackages();
 
-  const packageToVersionMap = (
-    await Promise.all(
-      storybookPackages.map(async (location) => {
-        const { name, version } = await readJson(
-          path.join(rootDirectory, location, 'package.json')
-        );
+  const packageToVersionMap = storybookPackages
+    .map((contents) => {
+      const { name, version } = contents;
 
-        return {
-          name,
-          version,
-        };
-      })
-    )
-  )
+      return {
+        name,
+        version,
+      };
+    })
     .filter(({ name }) => /^(@storybook|sb$|storybook$)/.test(name))
     // As some previous steps are asynchronous order is not always the same so sort them to avoid that
     .sort((package1, package2) => package1.name.localeCompare(package2.name))
     .reduce((acc, { name }) => ({ ...acc, [name]: updatedVersion }), {});
 
-  const versionsPath = path.join(__dirname, '..', 'src', 'versions.ts');
-
-  await writeFile(
+  await Bun.write(
     versionsPath,
     dedent`
       // auto generated file, do not edit
@@ -58,11 +55,13 @@ const run = async () => {
     `
   );
 
-  logger.log(`Updating versions and formatting results at: ${versionsPath}`);
+  logger.log(
+    `Updating versions and formatting results at: ${path.relative(codeDirectory, versionsPath)}`
+  );
 
-  const prettierBin = path.join(rootDirectory, '..', 'scripts', 'node_modules', '.bin', 'prettier');
+  const prettierBin = path.join(codeDirectory, '..', 'scripts', 'node_modules', '.bin', 'prettier');
   exec(`${prettierBin} --write ${versionsPath}`, {
-    cwd: path.join(rootDirectory),
+    cwd: path.join(codeDirectory),
   });
 };
 

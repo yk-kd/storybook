@@ -8,7 +8,7 @@
     "defaultBase": "next"
   },
   "cli": {
-    "packageManager": "yarn"
+    "packageManager": "pnpm"
   },
   "plugins": [
     {
@@ -37,7 +37,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "yarn prep",
+        "command": "bun run prep",
         "args": "--reset"
       },
       "configurations": {
@@ -50,17 +50,23 @@
         "^production",
         "{workspaceRoot}/../scripts/prepare/{bundle,addon-bundle,esm-bundle}.ts"
       ],
-      "dependsOn": ["^build"],
-      "outputs": ["{projectRoot}/dist"],
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "{projectRoot}/dist"
+      ],
       "cache": true
     },
     "test": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "yarn vitest watch --project={projectName}"
+        "command": "bun run vitest watch --project={projectName}"
       },
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "inputs": [
         "default",
         "^production",
@@ -72,60 +78,89 @@
       "configurations": {
         "production": {}
       },
-      "inputs": ["default", "^production", "{workspaceRoot}/../scripts/prepare/check.ts"],
-      "dependsOn": ["build"],
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/../scripts/prepare/check.ts"
+      ],
+      "dependsOn": [
+        "build"
+      ],
       "cache": true
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "yarn lint:js:cmd {projectRoot}",
+        "command": "bun run lint:js:cmd {projectRoot}",
         "args": "--quiet"
       },
-      "dependsOn": ["build"],
-      "inputs": ["default", "{workspaceRoot}/{.eslintignore,.eslintrc.js}"],
+      "dependsOn": [
+        "build"
+      ],
+      "inputs": [
+        "default",
+        "{workspaceRoot}/{.eslintignore,.eslintrc.js}"
+      ],
       "cache": true
     },
     "sandbox": {
       "executor": "nx:run-commands",
-      "inputs": [{ "runtime": "storybook --version" }],
-      "outputs": ["{workspaceRoot}/../{projectRoot}"],
+      "inputs": [
+        {
+          "runtime": "storybook --version"
+        }
+      ],
+      "outputs": [
+        "{workspaceRoot}/../{projectRoot}"
+      ],
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "yarn task sandbox -s sandbox --template={projectName}"
+        "command": "bun run task sandbox -s sandbox --template={projectName}"
       },
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": true
     },
     "sb:dev": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{workspaceRoot}/../{projectRoot}",
-        "command": "yarn storybook",
+        "command": "bun run storybook",
         "args": "--ci"
       },
-      "dependsOn": ["sandbox"]
+      "dependsOn": [
+        "sandbox"
+      ]
     },
     "sb:build": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{workspaceRoot}/../{projectRoot}",
-        "command": "yarn build-storybook"
+        "command": "bun run build-storybook"
       },
-      "inputs": ["^production"],
-      "outputs": ["{workspaceRoot}/../{projectRoot}/storybook-static"],
+      "inputs": [
+        "^production"
+      ],
+      "outputs": [
+        "{workspaceRoot}/../{projectRoot}/storybook-static"
+      ],
       "cache": true,
-      "dependsOn": ["sandbox"]
+      "dependsOn": [
+        "sandbox"
+      ]
     },
     "sb:serve": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "yarn http-server ../{projectRoot}/storybook-static",
+        "command": "bun run http-server ../{projectRoot}/storybook-static",
         "args": "--port 8001"
       },
-      "dependsOn": ["sb:build"]
+      "dependsOn": [
+        "sb:build"
+      ]
     }
     //    "e2e": {
     //      "executor": "nx:run-commands",
@@ -137,8 +172,13 @@
     //    }
   },
   "namedInputs": {
-    "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "sharedGlobals": ["{workspaceRoot}/tsconfig.json"],
+    "default": [
+      "{projectRoot}/**/*",
+      "sharedGlobals"
+    ],
+    "sharedGlobals": [
+      "{workspaceRoot}/tsconfig.json"
+    ],
     "production": [
       "default",
       "!{projectRoot}/src/**/**/*.{test,spec,stories}.?(c|m)[jt]s?(x)?(.snap),",

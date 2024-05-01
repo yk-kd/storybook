@@ -16,7 +16,7 @@ export const build: Task = {
     const start = now();
 
     await exec(
-      `yarn build-storybook --quiet ${template.modifications?.testBuild ? '--test' : ''}`,
+      `bun run build-storybook --quiet ${template.modifications?.testBuild ? '--test' : ''}`,
       { cwd: sandboxDir },
       { dryRun, debug }
     );

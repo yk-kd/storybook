@@ -21,8 +21,8 @@ export const e2eTestsBuild: Task & { port: number } = {
     }
 
     const playwrightCommand = process.env.DEBUG
-      ? 'yarn playwright test --project=chromium --ui'
-      : 'yarn playwright test';
+      ? 'bun run playwright test --project=chromium --ui'
+      : 'bun run playwright test';
 
     await exec(
       playwrightCommand,

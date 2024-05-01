@@ -344,7 +344,7 @@ async function run() {
   // useful for other scripts to know whether they're running in the creation of a sandbox in the monorepo
   process.env.IN_STORYBOOK_SANDBOX = 'true';
 
-  const allOptionValues = await getOptionsOrPrompt('yarn task', options);
+  const allOptionValues = await getOptionsOrPrompt('bun run task', options);
 
   const { task: taskKey, startFrom, junit, ...optionValues } = allOptionValues;
 
@@ -477,7 +477,7 @@ async function run() {
             dedent`
               To reproduce this error locally, run:
 
-              ${getCommand('yarn task', options, {
+              ${getCommand('bun run task', options, {
                 ...allOptionValues,
                 link: true,
                 startFrom: 'auto',
@@ -485,7 +485,7 @@ async function run() {
               
               Note this uses locally linking which in rare cases behaves differently to CI. For a closer match, run:
               
-              ${getCommand('yarn task', options, {
+              ${getCommand('bun run task', options, {
                 ...allOptionValues,
                 startFrom: 'auto',
               })}`
@@ -517,7 +517,7 @@ process.on('exit', () => {
   });
 });
 
-if (require.main === module) {
+if (import.meta.path === Bun.main) {
   run()
     .then((status) => process.exit(status))
     .catch((err) => {

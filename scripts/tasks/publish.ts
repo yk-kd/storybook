@@ -14,7 +14,7 @@ export const publish: Task = {
   },
   async run({ codeDir }, { dryRun, debug }) {
     return exec(
-      'yarn local-registry --publish',
+      'bun run local-registry --publish',
       { cwd: codeDir },
       {
         startMessage: '📕 Publishing packages',

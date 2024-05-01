@@ -8,14 +8,14 @@ export async function runRegistry({ dryRun, debug }: { dryRun?: boolean; debug?:
   const controller = new AbortController();
 
   exec(
-    'yarn local-registry --open',
+    'bun run local-registry --open',
     { cwd: CODE_DIRECTORY, env: { CI: 'true' } },
     { dryRun, debug, signal: controller.signal }
   ).catch((err) => {
     // If aborted, we want to make sure the rejection is handled.
     if (!err.killed) throw err;
   });
-  await exec('yarn wait-on tcp:127.0.0.1:6001', { cwd: CODE_DIRECTORY }, { dryRun, debug });
+  await exec('bun run wait-on tcp:127.0.0.1:6001', { cwd: CODE_DIRECTORY }, { dryRun, debug });
 
   return controller;
 }

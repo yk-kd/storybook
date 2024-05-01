@@ -109,7 +109,7 @@ const isCurrentVersionPublished = async ({
 
 const buildAllPackages = async () => {
   console.log(`🏗️ Building all packages...`);
-  await execaCommand('yarn task --task=compile --start-from=compile --no-link', {
+  await execaCommand('bun run task --task=compile --start-from=compile --no-link', {
     stdio: 'inherit',
     cleanup: true,
     cwd: CODE_DIR_PATH,
