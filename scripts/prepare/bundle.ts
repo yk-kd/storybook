@@ -228,3 +228,5 @@ await run({ cwd, flags }).catch((err: unknown) => {
   }
   process.exit(1);
 });
+
+export {};

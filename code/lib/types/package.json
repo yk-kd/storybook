@@ -58,7 +58,7 @@
     "access": "public"
   },
   "bundler": {
-    "pre": "./scripts/generate-available-frameworks.js",
+    "pre": "./scripts/generate-available-frameworks.ts",
     "entries": [
       "./src/index.ts"
     ]
