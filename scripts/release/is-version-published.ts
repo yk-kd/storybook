@@ -80,8 +80,5 @@ export const run = async (args: unknown[], options: unknown) => {
 
 if (esMain(import.meta.url)) {
   const parsed = program.parse();
-  run(parsed.args, parsed.opts()).catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+  await run(parsed.args, parsed.opts());
 }

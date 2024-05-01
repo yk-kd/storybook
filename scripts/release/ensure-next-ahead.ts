@@ -9,7 +9,7 @@
 
 /* eslint-disable no-console */
 import chalk from 'chalk';
-import path from 'path';
+import path from 'node:path';
 import program from 'commander';
 import semver from 'semver';
 import { z } from 'zod';
@@ -95,8 +95,5 @@ export const run = async (options: unknown) => {
 
 if (esMain(import.meta.url)) {
   const parsed = program.parse();
-  run(parsed.opts()).catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+  await run(parsed.opts());
 }

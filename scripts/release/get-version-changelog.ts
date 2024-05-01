@@ -29,8 +29,5 @@ export const getVersionChangelog = async (args: { version?: string; verbose?: bo
 
 if (esMain(import.meta.url)) {
   const parsed = program.parse();
-  getVersionChangelog({ version: parsed.args[0], verbose: parsed.opts().verbose }).catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+  await getVersionChangelog({ version: parsed.args[0], verbose: parsed.opts().verbose });
 }

@@ -34,7 +34,7 @@
   ],
   "scripts": {
     "check": "node ../../../scripts/node_modules/.bin/tsc",
-    "prep": "rimraf dist && bun ../../../scripts/prepare/tsc.ts"
+    "prep": "bun ../../../scripts/prepare/tsc.ts"
   },
   "dependencies": {
     "@storybook/builder-webpack5": "workspace:*",
@@ -115,7 +115,7 @@
   },
   "builders": "dist/builders/builders.json",
   "bundler": {
-    "post": "./scripts/postbuild.js",
+    "post": "./scripts/postbuild.ts",
     "tsConfig": "tsconfig.build.json"
   },
   "gitHead": "e6a7fd8a655c69780bc20b9749c2699e44beae17"

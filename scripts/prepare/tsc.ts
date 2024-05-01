@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'node:path';
 import fs, { move } from 'fs-extra';
 import * as ts from 'typescript';
 import { globSync } from 'glob';
@@ -66,11 +66,7 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
   }
 
   if (post) {
-    await exec(
-      `bun ${post}`,
-      { cwd },
-      { debug: true }
-    );
+    await exec(`bun ${post}`, { cwd }, { debug: true });
   }
 
   if (!watch) {
@@ -83,7 +79,7 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
 const flags = process.argv.slice(2);
 const cwd = process.cwd();
 
-run({ cwd, flags }).catch((err: unknown) => {
+await run({ cwd, flags }).catch((err: unknown) => {
   // We can't let the stack try to print, it crashes in a way that sets the exit code to 0.
   // Seems to have something to do with running JSON.parse() on binary / base64 encoded sourcemaps
   // in @cspotcode/source-map-support

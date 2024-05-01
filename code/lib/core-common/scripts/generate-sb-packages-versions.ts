@@ -24,48 +24,39 @@ const getMonorepoPackages = async () => {
   return contents.filter((content) => !content.private);
 };
 
-const run = async () => {
-  let updatedVersion = process.argv[process.argv.length - 1];
+let updatedVersion = process.argv[process.argv.length - 1];
 
-  if (!semver.valid(updatedVersion)) {
-    updatedVersion = pkg.version;
-  }
+if (!semver.valid(updatedVersion)) {
+  updatedVersion = pkg.version;
+}
 
-  const storybookPackages = await getMonorepoPackages();
+const storybookPackages = await getMonorepoPackages();
 
-  const packageToVersionMap = storybookPackages
-    .map((contents) => {
-      const { name, version } = contents;
+const packageToVersionMap = storybookPackages
+  .map((contents) => {
+    const { name, version } = contents;
 
-      return {
-        name,
-        version,
-      };
-    })
-    .filter(({ name }) => /^(@storybook|sb$|storybook$)/.test(name))
-    // As some previous steps are asynchronous order is not always the same so sort them to avoid that
-    .sort((package1, package2) => package1.name.localeCompare(package2.name))
-    .reduce((acc, { name }) => ({ ...acc, [name]: updatedVersion }), {});
+    return {
+      name,
+      version,
+    };
+  })
+  .filter(({ name }) => /^(@storybook|sb$|storybook$)/.test(name))
+  // As some previous steps are asynchronous order is not always the same so sort them to avoid that
+  .sort((package1, package2) => package1.name.localeCompare(package2.name))
+  .reduce((acc, { name }) => ({ ...acc, [name]: updatedVersion }), {});
 
-  await Bun.write(
-    versionsPath,
-    dedent`
+await Bun.write(
+  versionsPath,
+  dedent`
       // auto generated file, do not edit
       export default ${JSON.stringify(packageToVersionMap, null, 2)}
     `
-  );
+);
 
-  logger.log(
-    `Updating versions and formatting results at: ${relative(codeDirectory, versionsPath)}`
-  );
+logger.log(`Updating versions and formatting results at: ${relative(codeDirectory, versionsPath)}`);
 
-  const prettierBin = join(codeDirectory, '..', 'scripts', 'node_modules', '.bin', 'prettier');
-  exec(`${prettierBin} --write ${versionsPath}`, {
-    cwd: join(codeDirectory),
-  });
-};
-
-run().catch((e) => {
-  logger.error(e);
-  process.exit(1);
+const prettierBin = join(codeDirectory, '..', 'scripts', 'node_modules', '.bin', 'prettier');
+exec(`${prettierBin} --write ${versionsPath}`, {
+  cwd: join(codeDirectory),
 });

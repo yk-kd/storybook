@@ -1,8 +1,8 @@
 /* eslint-disable no-await-in-loop */
 import type { TestCase } from 'junit-xml';
 import { getJunitXml } from 'junit-xml';
-import { outputFile, readFile, pathExists } from 'fs-extra';
-import { join, resolve } from 'path';
+import { pathExists } from 'fs-extra';
+import { join, resolve } from 'node:path';
 import { prompt } from 'prompts';
 import { dedent } from 'ts-dedent';
 
@@ -218,7 +218,7 @@ async function writeJunitXml(
   const suite = { name, timestamp: startTime, time, testCases: [testCase, metadata] };
   const junitXml = getJunitXml({ time, name, suites: [suite] });
   const path = getJunitFilename(taskKey);
-  await outputFile(path, junitXml);
+  await Bun.write(path, junitXml);
   logger.log(`Test results written to ${resolve(path)}`);
 }
 
@@ -331,9 +331,9 @@ async function runTask(task: Task, details: TemplateDetails, optionValues: Passe
     throw err;
   } finally {
     if (await pathExists(junitFilename)) {
-      const junitXml = await (await readFile(junitFilename)).toString();
+      const junitXml = await (await Bun.file(junitFilename)).text();
       const prefixedXml = junitXml.replace(/classname="(.*)"/g, `classname="${details.key} $1"`);
-      await outputFile(junitFilename, prefixedXml);
+      await Bun.write(junitFilename, prefixedXml);
     }
   }
 }
@@ -518,11 +518,6 @@ process.on('exit', () => {
 });
 
 if (import.meta.path === Bun.main) {
-  run()
-    .then((status) => process.exit(status))
-    .catch((err) => {
-      logger.error();
-      logger.error(err);
-      process.exit(1);
-    });
+  const status = await run();
+  process.exit(status);
 }

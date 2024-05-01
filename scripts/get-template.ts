@@ -1,5 +1,5 @@
-import { readdir } from 'fs/promises';
-import { pathExists, readFile } from 'fs-extra';
+import { readdir } from 'node:fs/promises';
+import { pathExists } from 'fs-extra';
 import { program } from 'commander';
 import dedent from 'ts-dedent';
 import chalk from 'chalk';
@@ -62,8 +62,8 @@ export async function getTemplate(
     throw new Error(dedent`Circle parallelism set incorrectly.
     
       Parallelism is set to ${total}, but there are ${
-      potentialTemplateKeys.length
-    } templates to run for the "${scriptName}" task:
+        potentialTemplateKeys.length
+      } templates to run for the "${scriptName}" task:
       ${potentialTemplateKeys.map((v) => `- ${v}`).join('\n')}
     
       ${await checkParallelism(cadence)}
@@ -91,7 +91,7 @@ const tasks = Object.keys(tasksMap) as TaskKey[];
 const CONFIG_YML_FILE = '../.circleci/config.yml';
 
 async function checkParallelism(cadence?: Cadence, scriptName?: TaskKey) {
-  const configYml = await readFile(CONFIG_YML_FILE, 'utf-8');
+  const configYml = await Bun.file(CONFIG_YML_FILE).text();
   const data = yaml.parse(configYml);
 
   let potentialTemplateKeys: TemplateKey[] = [];
@@ -208,8 +208,5 @@ if (esMain(import.meta.url)) {
 
   const options = program.opts() as RunOptions;
 
-  run(options).catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+  await run(options);
 }

@@ -1,6 +1,5 @@
-/* eslint-disable jest/no-export, jest/expect-expect, no-console */
 import chalk from 'chalk';
-import assert from 'assert';
+import assert from 'node:assert';
 import fetch from 'node-fetch';
 import { esMain } from './utils/esmain';
 import { allTemplates } from '../code/lib/cli/src/sandbox-templates';
@@ -96,10 +95,5 @@ async function run() {
 export {};
 
 if (esMain(import.meta.url)) {
-  run()
-    .then(() => process.exit(0))
-    .catch((err) => {
-      console.log(err);
-      process.exit(1);
-    });
+  await run();
 }

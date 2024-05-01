@@ -2,7 +2,7 @@
 // So, we need to run a separate compodoc process on every symlink inside the project,
 // then combine the results into one large documentation.json
 
-import { join, resolve } from 'path';
+import { join, resolve } from 'node:path';
 import { realpath, readFile, writeFile, lstat } from 'fs-extra';
 import { globSync } from 'glob';
 import { directory } from 'tempy';
@@ -69,11 +69,5 @@ async function run(cwd: string) {
 }
 
 if (esMain(import.meta.url)) {
-  run(resolve(process.argv[2]))
-    .then(() => process.exit(0))
-    .catch((err) => {
-      logger.error();
-      logger.error(err);
-      process.exit(1);
-    });
+  await run(resolve(process.argv[2]));
 }

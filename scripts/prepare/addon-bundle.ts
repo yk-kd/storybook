@@ -1,7 +1,7 @@
 #!/usr/bin/env ../../node_modules/.bin/ts-node
 
 import * as fs from 'fs-extra';
-import path, { dirname, join, relative } from 'path';
+import path, { dirname, join, relative } from 'node:path';
 import type { Options } from 'tsup';
 import type { PackageJson } from 'type-fest';
 import { build } from 'tsup';
@@ -193,11 +193,7 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
   await Promise.all(tasks);
 
   if (post) {
-    await exec(
-      `bun ${post}`,
-      { cwd },
-      { debug: true }
-    );
+    await exec(`bun ${post}`, { cwd }, { debug: true });
   }
 
   console.log('done');
@@ -267,7 +263,7 @@ const hasFlag = (flags: string[], name: string) => !!flags.find((s) => s.startsW
 const flags = process.argv.slice(2);
 const cwd = process.cwd();
 
-run({ cwd, flags }).catch((err: unknown) => {
+await run({ cwd, flags }).catch((err: unknown) => {
   // We can't let the stack try to print, it crashes in a way that sets the exit code to 0.
   // Seems to have something to do with running JSON.parse() on binary / base64 encoded sourcemaps
   // in @cspotcode/source-map-support

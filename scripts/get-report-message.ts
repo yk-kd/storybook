@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { readJson } from 'fs-extra';
-import { join } from 'path';
+import { join } from 'node:path';
 import { execaCommand } from 'execa';
 import { esMain } from './utils/esmain';
 import { CODE_DIRECTORY } from './utils/constants';
@@ -65,8 +65,5 @@ async function run() {
 }
 
 if (esMain(import.meta.url)) {
-  run().catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+  await run();
 }

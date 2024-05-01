@@ -3,7 +3,7 @@
 // This little script converts the overflowscrollbars CSS file into the css-in-js file
 // it's normal you have to run prettier over the file after
 
-const fs = require('fs');
+const fs = require('node:fs');
 const { parse } = require('css');
 const { isNaN } = require('@storybook/global');
 

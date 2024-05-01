@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'node:path';
 import fs from 'fs-extra';
 import ts from 'typescript';
 
@@ -27,7 +27,7 @@ const run = async ({ cwd }: { cwd: string }) => {
   }
 };
 
-run({ cwd: process.cwd() }).catch((err: unknown) => {
+await run({ cwd: process.cwd() }).catch((err: unknown) => {
   // We can't let the stack try to print, it crashes in a way that sets the exit code to 0.
   // Seems to have something to do with running JSON.parse() on binary / base64 encoded sourcemaps
   // in @cspotcode/source-map-support

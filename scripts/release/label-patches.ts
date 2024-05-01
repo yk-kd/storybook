@@ -96,8 +96,5 @@ export const run = async (options: unknown) => {
 
 if (esMain(import.meta.url)) {
   const options = program.parse().opts();
-  run(options).catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+  await run(options);
 }

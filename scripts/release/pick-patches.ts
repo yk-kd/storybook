@@ -33,8 +33,7 @@ function formatPR(pr: PR): string {
 
 export const run = async (_: unknown) => {
   if (!process.env.GH_TOKEN) {
-    logger.error('GH_TOKEN environment variable must be set, exiting.');
-    process.exit(1);
+    throw new Error('GH_TOKEN environment variable must be set, exiting.');
   }
 
   const sourceBranch = SOURCE_BRANCH;
@@ -88,8 +87,5 @@ export const run = async (_: unknown) => {
 
 if (esMain(import.meta.url)) {
   const options = program.parse(process.argv);
-  run(options).catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+  await run(options);
 }

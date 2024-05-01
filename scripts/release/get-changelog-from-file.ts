@@ -3,7 +3,7 @@ import { setOutput } from '@actions/core';
 import chalk from 'chalk';
 import { program } from 'commander';
 import { readFile } from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import semver from 'semver';
 import dedent from 'ts-dedent';
 import { esMain } from '../utils/esmain';
@@ -57,12 +57,9 @@ export const getChangelogFromFile = async (args: {
 
 if (esMain(import.meta.url)) {
   const parsed = program.parse();
-  getChangelogFromFile({
+  await getChangelogFromFile({
     version: parsed.args[0],
     escape: parsed.opts().escape,
     verbose: parsed.opts().verbose,
-  }).catch((err) => {
-    console.error(err);
-    process.exit(1);
   });
 }

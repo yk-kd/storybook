@@ -1,5 +1,5 @@
 import { readFile } from 'fs-extra';
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 
 import { maxConcurrentTasks } from '../utils/maxConcurrentTasks';
 import { exec } from '../utils/exec';

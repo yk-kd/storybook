@@ -41,11 +41,8 @@ export const isPrerelease = async (args: { version?: string; verbose?: boolean }
 
 if (esMain(import.meta.url)) {
   const parsed = program.parse();
-  isPrerelease({
+  await isPrerelease({
     version: parsed.args[0],
     verbose: parsed.opts().verbose,
-  }).catch((err) => {
-    console.error(err);
-    process.exit(1);
   });
 }

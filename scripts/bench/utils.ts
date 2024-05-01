@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'node:path';
 import { ensureDir, writeJSON, readJSON, readdir } from 'fs-extra';
 import type { Page } from 'playwright-core';
 import type { BenchResults } from './types';

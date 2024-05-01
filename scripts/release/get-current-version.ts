@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import chalk from 'chalk';
 import { setOutput } from '@actions/core';
-import path from 'path';
+import path from 'node:path';
 import { readJson } from 'fs-extra';
 import { esMain } from '../utils/esmain';
 
@@ -19,8 +19,5 @@ export const getCurrentVersion = async () => {
 };
 
 if (esMain(import.meta.url)) {
-  getCurrentVersion().catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+  await getCurrentVersion();
 }

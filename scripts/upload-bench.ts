@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { join } from 'path';
+import { join } from 'node:path';
 import { BigQuery } from '@google-cloud/bigquery';
 
 import { execaCommand } from 'execa';
@@ -85,7 +85,10 @@ const uploadBench = async () => {
   await appTable.insert([row]);
 };
 
-uploadBench()
+await uploadBench()
+  .then(() => {
+    console.log('done');
+  })
   .catch((err) => {
     console.error(err);
     if (err.errors) {
@@ -94,7 +97,4 @@ uploadBench()
       });
     }
     process.exit(1);
-  })
-  .then(() => {
-    console.log('done');
   });

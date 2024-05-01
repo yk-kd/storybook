@@ -2,7 +2,7 @@
 import { setOutput } from '@actions/core';
 import { readFile, readJson, writeFile, writeJson } from 'fs-extra';
 import chalk from 'chalk';
-import path from 'path';
+import path from 'node:path';
 import program from 'commander';
 import semver from 'semver';
 import { z } from 'zod';
@@ -18,7 +18,10 @@ program
     '-R, --release-type <major|minor|patch|prerelease>',
     'Which release type to use to bump the version'
   )
-  .option('-P, --pre-id <id>', 'Which prerelease identifier to change to, eg. "alpha", "beta", "rc"')
+  .option(
+    '-P, --pre-id <id>',
+    'Which prerelease identifier to change to, eg. "alpha", "beta", "rc"'
+  )
   .option(
     '-E, --exact <version>',
     'Use exact version instead of calculating from current version, eg. "7.2.0-canary.123". Can not be combined with --release-type or --pre-id'
@@ -297,8 +300,5 @@ export const run = async (options: unknown) => {
 
 if (esMain(import.meta.url)) {
   const options = program.parse().opts();
-  run(options).catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+  await run(options);
 }

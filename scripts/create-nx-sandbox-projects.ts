@@ -1,6 +1,6 @@
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import * as templates from '../code/lib/cli/src/sandbox-templates';
-import * as fs from 'fs';
-import * as path from 'path';
 
 // @ts-expect-error somehow TS thinks there is a default export
 const { allTemplates, merged, daily, normal } = templates.default as typeof templates;
