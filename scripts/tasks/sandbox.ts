@@ -40,7 +40,7 @@ export const sandbox: Task = {
     const { create, install, addStories, extendMain, init, addExtraDependencies } =
       // @ts-expect-error esbuild for some reason exports a default object
       // eslint-disable-next-line import/extensions
-      (await import('./sandbox-parts.ts')).default;
+      await import('./sandbox-parts.ts');
 
     let startTime = now();
     await create(details, options);

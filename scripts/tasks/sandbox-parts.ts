@@ -80,16 +80,18 @@ export const create: Task['run'] = async ({ key, template, sandboxDir }, { dryRu
 
 export const install: Task['run'] = async ({ sandboxDir, key }, { link, dryRun, debug }) => {
   const cwd = sandboxDir;
-  await installYarn2({ cwd, dryRun, debug });
+  // await installYarn2({ cwd, dryRun, debug });
+
+  console.log('OK');
 
   if (link) {
-    await executeCLIStep(steps.link, {
-      argument: sandboxDir,
-      cwd: CODE_DIRECTORY,
-      optionValues: { local: true, start: false },
-      dryRun,
-      debug,
-    });
+    // await executeCLIStep(steps.link, {
+    //   argument: sandboxDir,
+    //   cwd: CODE_DIRECTORY,
+    //   optionValues: { local: true, start: false },
+    //   dryRun,
+    //   debug,
+    // });
     await addWorkaroundResolutions({ cwd, dryRun, debug });
   } else {
     // We need to add package resolutions to ensure that we only ever install the latest version
@@ -115,8 +117,10 @@ export const install: Task['run'] = async ({ sandboxDir, key }, { link, dryRun, 
       await addWorkaroundResolutions({ cwd, dryRun, debug });
     }
 
+    console.log('OK 2');
+
     await exec(
-      'yarn install',
+      'bun install',
       { cwd },
       {
         debug,

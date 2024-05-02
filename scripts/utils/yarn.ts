@@ -1,5 +1,6 @@
 import { pathExists, readJSON, writeJSON } from 'fs-extra';
 import path from 'node:path';
+import { $ } from 'bun';
 
 import type { TemplateKey } from 'get-template';
 import { exec } from './exec';
@@ -48,16 +49,22 @@ export const installYarn2 = async ({ cwd, dryRun, debug }: YarnOptions) => {
     command.push(`yarn config set nodeLinker node-modules`);
   }
 
-  await exec(
-    command,
-    { cwd },
-    {
-      dryRun,
-      debug,
-      startMessage: `🧶 Installing Yarn 2`,
-      errorMessage: `🚨 Installing Yarn 2 failed`,
-    }
-  );
+  const shell = new $.Shell();
+
+  console.log('🧶 Installing Yarn 2');
+  await shell`${command.join(' && ')}`.cwd(cwd);
+
+  // await exec(
+  //   command.join(' && '),
+  //   { cwd },
+  //   {
+  //     dryRun,
+  //     debug: true,
+  //     startMessage: `🧶 Installing Yarn 2`,
+  //     errorMessage: `🚨 Installing Yarn 2 failed`,
+  //   }
+  // );
+  console.log('Yarn 2 installed');
 };
 
 export const addWorkaroundResolutions = async ({ cwd, dryRun }: YarnOptions) => {

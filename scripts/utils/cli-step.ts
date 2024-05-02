@@ -83,7 +83,7 @@ export async function executeCLIStep<TOptions extends OptionSpecifier>(
   if (cliStep.hasArgument && !options.argument)
     throw new Error(`Argument required for ${cliStep.command} command.`);
 
-  const prefix = `node ${cliExecutable} ${cliStep.command}`;
+  const prefix = `bun ${cliExecutable} ${cliStep.command}`;
   const command = getCommand(
     cliStep.hasArgument ? `${prefix} ${options.argument}` : prefix,
     cliStep.options,
