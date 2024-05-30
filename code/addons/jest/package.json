@@ -35,7 +35,7 @@
       "import": "./dist/index.mjs"
     },
     "./manager": "./dist/manager.js",
-    "./register": "./dist/manager.js",
+    "./preset": "./dist/preset.js",
     "./package.json": "./package.json"
   },
   "main": "dist/index.js",
@@ -80,6 +80,9 @@
     ],
     "managerEntries": [
       "./src/manager.tsx"
+    ],
+    "nodeEntries": [
+      "./src/preset.ts"
     ]
   },
   "gitHead": "e6a7fd8a655c69780bc20b9749c2699e44beae17",

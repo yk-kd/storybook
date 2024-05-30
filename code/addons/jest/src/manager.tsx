@@ -15,7 +15,7 @@ addons.register(ADDON_ID, (api) => {
 
   addons.add('SIDEBAR_BOTTOM_ID', {
     type: types.experimental_SIDEBAR_BOTTOM,
-    render: ({ active }) => {
+    render: () => {
       return <div>Test filter</div>;
     },
   });

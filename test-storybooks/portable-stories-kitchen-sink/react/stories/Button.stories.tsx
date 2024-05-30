@@ -104,7 +104,8 @@ export const CSF3InputFieldFilled: CSF3Story = {
       const buttonEl = canvas.getByRole('button');
       await userEvent.click(buttonEl);
       await userEvent.type(inputEl, 'Hello world!');
-      await expect(inputEl).toHaveValue('Hello world!');
+      // TODO: undo this, we just want to have a failure in the test reports for now
+      await expect(inputEl).not.toHaveValue('Hello world!');
     });
     console.log('end of play function');
   },

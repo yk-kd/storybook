@@ -1,3 +1,4 @@
+/* eslint-disable local-rules/no-uncategorized-errors */
 import type { Channel } from '@storybook/channels';
 
 export const GET_VALUE = `experimental_useSharedState_getValue`;
