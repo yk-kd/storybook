@@ -20,6 +20,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^1.5.0",
     "@hipster/experimental-vitest-plugin-sb": "1.0.1-canary.11.aad9c1b.0",
     "@playwright/experimental-ct-react": "^1.42.1",
     "@storybook/addon-actions": "^8.0.0",

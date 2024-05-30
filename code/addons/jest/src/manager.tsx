@@ -19,7 +19,9 @@ export function reportToStatusUpdate(report: TestReport): API_StatusUpdate {
   report.testResults.forEach((testResult) => {
     testResult.assertionResults.forEach(({ status }) => {
       const storyId = 'example-button--csf-3-input-field-filled';
-      storyIdToStatus[storyId] = assertionResultToStatus[status];
+      if (status === 'failed') {
+        storyIdToStatus[storyId] = assertionResultToStatus[status];
+      }
     });
   });
 
