@@ -7,6 +7,7 @@ import type { Channel } from '@storybook/channels';
 import type { Options } from '@storybook/types';
 
 import { SharedState } from './utils/SharedState';
+import { REPORT_STATE_ID } from './shared';
 
 async function getTestReport(reportFile: string): Promise<TestReport> {
   try {
@@ -38,7 +39,7 @@ export async function experimental_serverChannel(
 ) {
   const { reportFile = join(process.cwd(), '.test-results.json') } = options;
 
-  const testReportState = SharedState.subscribe<TestReport>('TEST_RESULTS', channel);
+  const testReportState = SharedState.subscribe<TestReport>(REPORT_STATE_ID, channel);
   testReportState.value = await getTestReport(reportFile);
 
   watchTestReport(reportFile, async (results) => {

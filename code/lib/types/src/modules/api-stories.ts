@@ -120,6 +120,8 @@ export interface API_Versions {
 
 export type API_StatusValue = 'pending' | 'success' | 'error' | 'warn' | 'unknown';
 
+type AddonId = string;
+
 export interface API_StatusObject {
   status: API_StatusValue;
   title: string;
@@ -127,9 +129,9 @@ export interface API_StatusObject {
   data?: any;
 }
 
-export type API_StatusState = Record<StoryId, Record<string, API_StatusObject>>;
+export type API_StatusState = Record<StoryId, Record<AddonId, API_StatusObject>>;
 export type API_StatusUpdate = Record<StoryId, API_StatusObject | null>;
 
 export type API_FilterFunction = (
-  item: API_PreparedIndexEntry & { status: Record<string, API_StatusObject | null> }
+  item: API_PreparedIndexEntry & { status: Record<AddonId, API_StatusObject | null> }
 ) => boolean;

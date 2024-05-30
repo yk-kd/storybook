@@ -3,6 +3,7 @@ import type { StorybookInternalParameters } from '@storybook/types';
 
 // addons, panels and events get unique names using a prefix
 export const PARAM_KEY = 'test';
+export const REPORT_STATE_ID = 'TEST_REPORT';
 export const ADDON_ID = 'storybookjs/test';
 export const PANEL_ID = `${ADDON_ID}/panel`;
 
