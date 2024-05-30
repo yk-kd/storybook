@@ -229,7 +229,7 @@ export class StoryStore<TRenderer extends Renderer> {
   getStoryContext(
     story: PreparedStory<TRenderer>,
     { forceInitialArgs = false } = {}
-  ): Omit<StoryContextForLoaders, 'viewMode'> {
+  ): Omit<StoryContextForLoaders<TRenderer>, 'viewMode'> {
     return prepareContext({
       ...story,
       args: forceInitialArgs ? story.initialArgs : this.args.get(story.id),

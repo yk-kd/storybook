@@ -12,8 +12,14 @@ import {
   restoreAllMocks,
 } from './spy';
 import type { Renderer } from '@storybook/types';
-
+import { within } from './testing-library';
 export * from './spy';
+
+declare module '@storybook/types' {
+  interface StoryContext {
+    mount: () => Promise<ReturnType<typeof within>>;
+  }
+}
 
 export const { expect } = instrument(
   { expect: rawExpect },
@@ -88,8 +94,22 @@ const nameSpiesAndWrapActionsInSpies: LoaderFunction<Renderer> = ({ initialArgs 
   traverseArgs(initialArgs);
 };
 
+const enhanceMount: LoaderFunction<Renderer> = (context) => {
+  if ('mount' in context) {
+    const mount = context.mount.bind(null);
+    context.mount = async () => {
+      await mount();
+      return within(context.canvasElement);
+    };
+  }
+};
+
 // We are using this as a default Storybook loader, when the test package is used. This avoids the need for optional peer dependency workarounds.
 // eslint-disable-next-line no-underscore-dangle
-(global as any).__STORYBOOK_TEST_LOADERS__ = [resetAllMocksLoader, nameSpiesAndWrapActionsInSpies];
+(global as any).__STORYBOOK_TEST_LOADERS__ = [
+  resetAllMocksLoader,
+  nameSpiesAndWrapActionsInSpies,
+  enhanceMount,
+];
 // eslint-disable-next-line no-underscore-dangle
 (global as any).__STORYBOOK_TEST_ON_MOCK_CALL__ = onMockCall;

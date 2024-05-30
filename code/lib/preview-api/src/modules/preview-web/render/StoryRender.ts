@@ -1,26 +1,30 @@
 import type {
-  Renderer,
+  PlayFunction,
+  PlayFunctionContext,
+  PreparedStory,
   RenderContext,
   RenderContextCallbacks,
+  Renderer,
   RenderToCanvas,
-  PreparedStory,
-  TeardownRenderToCanvas,
+  StepLabel,
   StoryContext,
   StoryContextForLoaders,
   StoryId,
   StoryRenderOptions,
+  TeardownRenderToCanvas,
   ViewMode,
 } from '@storybook/types';
 import type { Channel } from '@storybook/channels';
 import {
+  PLAY_FUNCTION_THREW_EXCEPTION,
   STORY_RENDER_PHASE_CHANGED,
   STORY_RENDERED,
-  PLAY_FUNCTION_THREW_EXCEPTION,
   UNHANDLED_ERRORS_WHILE_PLAYING,
 } from '@storybook/core-events';
 import type { StoryStore } from '../../store';
 import type { Render, RenderType } from './Render';
 import { PREPARE_ABORTED } from './Render';
+import { getUsedProps } from './mount-utils';
 
 const { AbortController } = globalThis;
 
@@ -165,6 +169,7 @@ export class StoryRender<TRenderer extends Renderer> implements Render<TRenderer
       applyBeforeEach,
       unboundStoryFn,
       playFunction,
+      runStep,
     } = story;
 
     if (forceRemount && !initial) {
@@ -179,62 +184,64 @@ export class StoryRender<TRenderer extends Renderer> implements Render<TRenderer
     // abort controller may be torn down (above) before we actually check the signal.
     const abortSignal = (this.abortController as AbortController).signal;
 
+    const context: PlayFunctionContext<TRenderer> = {
+      ...(this.storyContext() as StoryContextForLoaders<TRenderer>),
+      viewMode: this.viewMode as StoryContext['viewMode'],
+      abortSignal,
+      canvasElement,
+      loaded: {},
+      mount: async () => {
+        await this.runPhase(abortSignal, 'rendering', async () => {
+          const teardown = await this.renderToScreen(renderContext, canvasElement);
+          this.teardownRender = teardown || (() => {});
+        });
+      },
+      step: (label: StepLabel, play: PlayFunction<TRenderer>) => runStep!(label, play, context),
+    };
+
+    const renderContext: RenderContext<TRenderer> = {
+      componentId,
+      title,
+      kind: title,
+      id,
+      name,
+      story: name,
+      tags,
+      ...this.callbacks,
+      showError: (error) => {
+        this.phase = 'errored';
+        return this.callbacks.showError(error);
+      },
+      showException: (error) => {
+        this.phase = 'errored';
+        return this.callbacks.showException(error);
+      },
+      forceRemount: forceRemount || this.notYetRendered,
+      storyContext: context,
+      storyFn: () => unboundStoryFn(context),
+      unboundStoryFn,
+    };
+
     try {
-      let loadedContext: Awaited<ReturnType<typeof applyLoaders>>;
       await this.runPhase(abortSignal, 'loading', async () => {
-        loadedContext = await applyLoaders({
-          ...this.storyContext(),
-          viewMode: this.viewMode,
-          // TODO add this to CSF
-          canvasElement,
-        } as unknown as StoryContextForLoaders<TRenderer>);
+        context.loaded = await applyLoaders(context);
       });
+
       if (abortSignal.aborted) return;
 
-      const renderStoryContext: StoryContext<TRenderer> = {
-        ...loadedContext!,
-        // By this stage, it is possible that new args/globals have been received for this story
-        // and we need to ensure we render it with the new values
-        ...this.storyContext(),
-        abortSignal,
-        // We should consider parameterizing the story types with TRenderer['canvasElement'] in the future
-        canvasElement: canvasElement as any,
-      };
-
       await this.runPhase(abortSignal, 'beforeEach', async () => {
-        const cleanupCallbacks = await applyBeforeEach(renderStoryContext);
+        const cleanupCallbacks = await applyBeforeEach(context);
         this.store.addCleanupCallbacks(story, cleanupCallbacks);
       });
 
       if (abortSignal.aborted) return;
 
-      const renderContext: RenderContext<TRenderer> = {
-        componentId,
-        title,
-        kind: title,
-        id,
-        name,
-        story: name,
-        tags,
-        ...this.callbacks,
-        showError: (error) => {
-          this.phase = 'errored';
-          return this.callbacks.showError(error);
-        },
-        showException: (error) => {
-          this.phase = 'errored';
-          return this.callbacks.showException(error);
-        },
-        forceRemount: forceRemount || this.notYetRendered,
-        storyContext: renderStoryContext,
-        storyFn: () => unboundStoryFn(renderStoryContext),
-        unboundStoryFn,
-      };
-
-      await this.runPhase(abortSignal, 'rendering', async () => {
-        const teardown = await this.renderToScreen(renderContext, canvasElement);
-        this.teardownRender = teardown || (() => {});
-      });
+      if (!playFunction || !getUsedProps(playFunction).includes('mount')) {
+        await context.mount();
+        context.mount = async () => {
+          throw new Error('Destructure mount if you want to use it in the play function.');
+        };
+      }
 
       this.notYetRendered = false;
       if (abortSignal.aborted) return;
@@ -253,7 +260,7 @@ export class StoryRender<TRenderer extends Renderer> implements Render<TRenderer
         this.disableKeyListeners = true;
         try {
           await this.runPhase(abortSignal, 'playing', async () => {
-            await playFunction(renderContext.storyContext);
+            await playFunction(context);
           });
           if (!ignoreUnhandledErrors && unhandledErrors.size > 0) {
             await this.runPhase(abortSignal, 'errored');
