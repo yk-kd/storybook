@@ -12,12 +12,15 @@ import {
   restoreAllMocks,
 } from './spy';
 import type { Renderer } from '@storybook/types';
+import type { queries } from './testing-library';
 import { within } from './testing-library';
 export * from './spy';
 
+type Queries = ReturnType<typeof within<typeof queries>>;
+
 declare module '@storybook/types' {
   interface StoryContext {
-    mount: () => Promise<ReturnType<typeof within>>;
+    mount(): Promise<Queries>;
   }
 }
 
