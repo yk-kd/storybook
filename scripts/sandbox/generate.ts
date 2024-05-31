@@ -4,7 +4,7 @@ import pLimit from 'p-limit';
 import prettyTime from 'pretty-hrtime';
 import { copy, emptyDir, ensureDir, move, remove, rename, writeFile } from 'fs-extra';
 import { program } from 'commander';
-import { temporaryDirectory } from 'tempy';
+import { directory } from 'tempy';
 import { execaCommand } from 'execa';
 import { esMain } from '../utils/esmain';
 
@@ -81,7 +81,7 @@ const addStorybook = async ({
   const beforeDir = join(baseDir, BEFORE_DIR_NAME);
   const afterDir = join(baseDir, AFTER_DIR_NAME);
 
-  const tmpDir = temporaryDirectory();
+  const tmpDir = directory();
 
   try {
     await copy(beforeDir, tmpDir);
@@ -167,7 +167,7 @@ const runGenerators = async (
           await emptyDir(baseDir);
 
           // We do the creation inside a temp dir to avoid yarn container problems
-          const createBaseDir = temporaryDirectory();
+          const createBaseDir = directory();
           if (!script.includes('pnp')) {
             await setupYarn({ cwd: createBaseDir });
           }
