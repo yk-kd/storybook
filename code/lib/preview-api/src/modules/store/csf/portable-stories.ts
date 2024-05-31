@@ -17,6 +17,8 @@ import type {
   StrictArgTypes,
   PlayFunctionContext,
   ProjectAnnotations,
+  StepLabel,
+  PlayFunction,
 } from '@storybook/types';
 
 import { HooksContext } from '../../../addons';
@@ -106,6 +108,10 @@ export function composeStory<TRenderer extends Renderer = Renderer, TArgs extend
     loaded: {},
     abortSignal: null as unknown as AbortSignal,
     canvasElement: null,
+    mount: async () => {
+      throw new Error('mount not provided.');
+    },
+    step: (label: StepLabel, play: PlayFunction<TRenderer>) => story.runStep!(label, play, context),
     ...story,
   };
 
