@@ -6,9 +6,6 @@ import { useResizeDetector } from 'react-resize-detector';
 import { Result } from './Result';
 import type { Test } from '../hoc/provideJestResult';
 import { provideTests as provideJestResult } from '../hoc/provideJestResult';
-import { useSharedState } from '../utils/useSharedState';
-import type { TestReport } from '../types';
-import { REPORT_STATE_ID } from '../shared';
 
 const StatusTypes = {
   PASSED_TYPE: 'passed',
@@ -267,31 +264,27 @@ interface PanelProps {
   tests?: Test[];
 }
 
-const Panel = ({ tests }: PanelProps) => {
-  // const [testReport] = useSharedState<TestReport>(REPORT_STATE_ID);
-  // console.log({ testReport });
-  return (
-    <ScrollArea vertical>
-      {tests ? (
-        <Content tests={tests} />
-      ) : (
-        <Placeholder>
-          <Fragment>No tests found</Fragment>
-          <Fragment>
-            Learn how to&nbsp;
-            <Link
-              href="https://github.com/storybookjs/storybook/tree/master/addons/jest"
-              target="_blank"
-              withArrow
-            >
-              add test results to your story
-            </Link>
-          </Fragment>
-        </Placeholder>
-      )}
-    </ScrollArea>
-  );
-};
+const Panel = ({ tests }: PanelProps) => (
+  <ScrollArea vertical>
+    {tests ? (
+      <Content tests={tests} />
+    ) : (
+      <Placeholder>
+        <Fragment>No tests found</Fragment>
+        <Fragment>
+          Learn how to&nbsp;
+          <Link
+            href="https://github.com/storybookjs/storybook/tree/master/addons/jest"
+            target="_blank"
+            withArrow
+          >
+            add Jest test results to your story
+          </Link>
+        </Fragment>
+      </Placeholder>
+    )}
+  </ScrollArea>
+);
 
 Panel.defaultProps = {
   tests: undefined,
