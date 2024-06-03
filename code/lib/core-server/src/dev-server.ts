@@ -46,6 +46,13 @@ export async function storybookDevServer(options: Options) {
     });
 
   app.use(compression({ level: 1 }));
+  app.use(express.json());
+
+  app.post('/experimental-status-api', (req, res) => {
+    const { data, id } = req.body;
+    serverChannel.emit('experimental-status-api', { data, id });
+    res.status(200).send('OK');
+  });
 
   if (typeof options.extendServer === 'function') {
     options.extendServer(server);

@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react';
-import type { Combo } from '@storybook/manager-api';
 import { addons, Consumer, types, useAddonState } from '@storybook/manager-api';
 import { AddonPanel, Badge, Spaced } from '@storybook/components';
 import { CallStates } from '@storybook/instrumenter';
 import { ADDON_ID, PANEL_ID } from './constants';
 import { Panel } from './Panel';
 import { TabIcon } from './components/TabStatus';
+import type { Combo } from '@storybook/manager-api';
+import type { API_StatusUpdate } from '@storybook/types';
 
 function Title() {
   const [addonState = {}] = useAddonState(ADDON_ID);
@@ -43,4 +44,29 @@ addons.register(ADDON_ID, (api) => {
       );
     },
   });
+
+  const channel = api.getChannel();
+  if (!channel) return;
+
+  const onReportStateChange = async ({ data, id }: { data: API_StatusUpdate; id: string }) => {
+    if (!data || id !== 'storybook-vitest-plugin') return;
+
+    const statusData = Object.entries(data).reduce((acc, [storyId, value]) => {
+      return {
+        ...acc,
+        [storyId]: {
+          ...value,
+          onClick: () => {
+            api.setSelectedPanel(PANEL_ID);
+            api.selectStory(storyId);
+          },
+        },
+      };
+    }, {} as API_StatusUpdate);
+
+    // TODO: Temporary workaround to reuse VTA's sidebar filter button
+    api.experimental_updateStatus(id, statusData);
+  };
+
+  channel.on('experimental-status-api', onReportStateChange);
 });
