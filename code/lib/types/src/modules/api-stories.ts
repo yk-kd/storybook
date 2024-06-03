@@ -126,6 +126,7 @@ export interface API_StatusObject {
   status: API_StatusValue;
   title: string;
   description: string;
+  onClick?: () => void;
   data?: any;
 }
 

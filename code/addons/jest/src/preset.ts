@@ -9,13 +9,16 @@ import type { Options } from '@storybook/types';
 import { SharedState } from './utils/SharedState';
 import { REPORT_STATE_ID } from './shared';
 
-async function getTestReport(reportFile: string): Promise<TestReport> {
+async function getTestReport(reportFile: string): Promise<TestReport | null> {
   try {
     const data = await readFile(reportFile, 'utf8');
-    return JSON.parse(data); // TODO: Streaming and parsing large files
-  } catch (e) {
-    console.error('Failed to parse test results', e);
-    throw e;
+    return JSON.parse(data);
+  } catch (error: any) {
+    if (error.code === 'ENOENT') {
+      return null;
+    }
+    console.error('Failed to parse test results', error);
+    throw error;
   }
 }
 
@@ -27,7 +30,12 @@ const watchTestReport = async (
   const results = await getTestReport(reportFile);
   await onChange(results);
 
+  // watch(process.cwd(), async (eventType: string, filename: string | null) => {
+  //   console.log('File changed', { eventType, filename, reportFile });
+  //   if (filename === reportFile) await onChange(await getTestReport(filename));
+  // });
   watch(reportFile, async (eventType: string, filename: string | null) => {
+    console.log('File changed', { eventType, filename, reportFile });
     if (filename) await onChange(await getTestReport(filename));
   });
 };
@@ -39,7 +47,7 @@ export async function experimental_serverChannel(
 ) {
   const { reportFile = join(process.cwd(), '.test-results.json') } = options;
 
-  const testReportState = SharedState.subscribe<TestReport>(REPORT_STATE_ID, channel);
+  const testReportState = SharedState.subscribe<TestReport | null>(REPORT_STATE_ID, channel);
   testReportState.value = await getTestReport(reportFile);
 
   watchTestReport(reportFile, async (results) => {

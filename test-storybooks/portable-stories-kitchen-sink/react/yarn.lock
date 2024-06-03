@@ -4668,6 +4668,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/path-browserify@npm:^1":
+  version: 1.0.2
+  resolution: "@types/path-browserify@npm:1.0.2"
+  checksum: 10/7b26df1a32827f7e588009386f62e0f900e8d349722b1b8b8c100cd2c4cc1e95c64099f5ec879cd131e69869088f336998a3ddb17085b68312414431a4eace01
+  languageName: node
+  linkType: hard
+
 "@types/pretty-hrtime@npm:^1.0.0":
   version: 1.0.3
   resolution: "@types/pretty-hrtime@npm:1.0.3"
@@ -10902,6 +10909,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"path-browserify@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "path-browserify@npm:1.0.1"
+  checksum: 10/7e7368a5207e7c6b9051ef045711d0dc3c2b6203e96057e408e6e74d09f383061010d2be95cb8593fe6258a767c3e9fc6b2bfc7ce8d48ae8c3d9f6994cca9ad8
+  languageName: node
+  linkType: hard
+
 "path-exists@npm:^3.0.0":
   version: 3.0.0
   resolution: "path-exists@npm:3.0.0"
@@ -11139,6 +11153,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.4.2"
     "@testing-library/react": "npm:^14.2.1"
     "@types/identity-obj-proxy": "npm:^3"
+    "@types/path-browserify": "npm:^1"
     "@types/react": "npm:^18.2.55"
     "@types/react-dom": "npm:^18.2.19"
     "@typescript-eslint/eslint-plugin": "npm:^6.21.0"
@@ -11153,6 +11168,7 @@ __metadata:
     identity-obj-proxy: "npm:^3.0.0"
     jest: "npm:^29.7.0"
     jest-environment-jsdom: "npm:^29.7.0"
+    path-browserify: "npm:^1.0.1"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     storybook: "npm:^8.0.0"

@@ -50,7 +50,7 @@ interface ResultProps {
 }
 
 export function Result(props: ResultProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const onToggle = () => {
     setIsOpen(!isOpen);

@@ -263,14 +263,13 @@ const Content = styled(({ tests, className }: ContentProps) => (
   flex: '1 1 0%',
 });
 
-// interface PanelProps {
-//   tests?: Test[];
-// }
+interface PanelProps {
+  tests?: Test[];
+}
 
-const Panel = () => {
-  const [testReport] = useSharedState<TestReport>(REPORT_STATE_ID);
-  console.log({ testReport });
-  const tests = testReport as any;
+const Panel = ({ tests }: PanelProps) => {
+  // const [testReport] = useSharedState<TestReport>(REPORT_STATE_ID);
+  // console.log({ testReport });
   return (
     <ScrollArea vertical>
       {tests ? (

@@ -1,5 +1,6 @@
 import type { Preview } from '@storybook/react';
-
+// import {withTests} from '@storybook/addon-jest'
+// import results from '../.test-results.json'
 console.log('preview file is called!');
 
 const preview: Preview = {
@@ -11,6 +12,10 @@ const preview: Preview = {
         {StoryFn()}
       </div>
     ),
+    // withTests({
+    //   results,
+    //   filesExt:'((\\.stories?)|(\\.tests?))?(\\.[jt]sx?)?$'
+    // })
   ],
   globalTypes: {
     locale: {

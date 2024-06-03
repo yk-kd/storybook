@@ -239,6 +239,7 @@ const Node = React.memo<NodeProps>(function Node({
                   title: v.title,
                   description: v.description,
                   right: statusMapping[v.status][0],
+                  onClick: v.onClick,
                 }))}
               />
             )}
