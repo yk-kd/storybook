@@ -126,7 +126,7 @@
     "esbuild-plugin-alias": "^0.2.1",
     "eslint": "^8.56.0",
     "eslint-plugin-storybook": "^0.8.0",
-    "execa": "^6.1.0",
+    "execa": "^8",
     "express": "^4.19.2",
     "fast-folder-size": "^2.1.0",
     "fast-glob": "^3.2.12",
