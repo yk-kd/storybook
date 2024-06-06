@@ -44,7 +44,7 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
   } = (await fs.readJson(join(cwd, 'package.json'))) as PackageJsonWithBundlerConfig;
 
   if (pre) {
-    await exec(`node -r ${__dirname}/../node_modules/esbuild-register/register.js ${pre}`, { cwd });
+    await exec(`bun ${pre}`, { cwd });
   }
 
   const reset = hasFlag(flags, 'reset');
@@ -106,11 +106,9 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
         external: externals,
 
         esbuildOptions: (c) => {
-          /* eslint-disable no-param-reassign */
           c.conditions = ['module'];
           c.platform = platform || 'browser';
           Object.assign(c, getESBuildOptions(optimized));
-          /* eslint-enable no-param-reassign */
         },
       })
     );
@@ -133,10 +131,8 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
         external: externals,
 
         esbuildOptions: (c) => {
-          /* eslint-disable no-param-reassign */
           c.platform = 'node';
           Object.assign(c, getESBuildOptions(optimized));
-          /* eslint-enable no-param-reassign */
         },
       })
     );
@@ -149,15 +145,18 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
   await Promise.all(tasks);
 
   if (post) {
-    await exec(
-      `node -r ${__dirname}/../node_modules/esbuild-register/register.js ${post}`,
-      { cwd },
-      { debug: true }
-    );
+    await exec(`bun ${post}`, { cwd }, { debug: true });
   }
 
   if (process.env.CI !== 'true') {
     console.log('done');
+  }
+
+  // TODO: Remove as soon as https://github.com/egoist/tsup/pull/1140 is merged and released
+  // The PR will fix an issue with worker_threads, which don't terminate the process properly
+  // and therefore cause the process to hang indefinitely.
+  if (!watch) {
+    process.exit(0);
   }
 };
 
